@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Shop</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js' integrity='sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==' crossorigin='anonymous'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.js' integrity='sha512-iC0CGhwGwgIjo7pRPE2dDC98S2YFB4Y6sJjOfto+gvz7pTljj9KWy2/Ad28xgMQDfT05HJeKb7JN7dXJDnKCVA==' crossorigin='anonymous'></script>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.css' integrity='sha512-KOWhIs2d8WrPgR4lTaFgxI35LLOp5PRki/DxQvb7mlP29YZ5iJ5v8tiLWF7JLk5nDBlgPP1gHzw96cZ77oD7zQ==' crossorigin='anonymous'/>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="wrap">
+        <div class="menu">
+            <i class="fa-solid fa-xmark fa-xl" id="close"></i>
+            <button>bay</button>
+        </div>
+        <div class="header">
+            <div class="logo">Online Market</div>
+             <div id="send"> 
+                <i class="fa-solid fa-cart-shopping" id="shop"></i> 
+                <span id="cartLength">0</span>
+             </div>
+        </div>
+        <div class="goodsContainer"></div>
+    </div>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Montserrat;
+}
+
+.wrap {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    height: 10vh;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 100px;
+    background-color: #333;
+    color: #ffff;
+}
+
+.logo {
+    font-weight: 900;
+}
+
+#send {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+#send span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+    background-color: red;
+    color: #fff;
+    border-radius: 50%;
+    position: relative;
+    top: -20px;
+}
+.goodsContainer{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.goodsContainer div{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
+width: 200px;
+height: 250px;
+border-radius: 20px;
+border: none;
+border: solid 2px black;
+padding: 10px;
+}
+.buyBtn{
+    width: 80px;
+    height: 30px;
+    border-radius: 10px;
+    border: none;
+    border: solid 1px black;
+    background-color: #fff;
+}
+.buyBtn:active {
+    background-color: black;
+    border: solid 1px #fff;
+    color: white;
+    border: none;
+}
+.menu{
+    display: none;
+    width: 450px;
+    height: 600px;
+    border-radius: 40px;
+    position: absolute;
+    margin-top: 200px;
+    border: solid 1px #000;
+    background-color: white;
+}
+.menu i{
+    margin-left: 410px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+.menu button{
+    position: absolute;
+    margin-top: 560px;
+    margin-left: 180px;
+    width: 80px;
+    height: 25px;
+    width: 80px;
+    height: 30px;
+    border-radius: 10px;
+    border: none;
+    border: solid 1px black;
+    background-color: #fff;
+}
+.menu button:active{
+    background-color: black;
+    border: solid 1px #fff;
+    color: white;
+    border: none;
+}
+    </style>
+    <script>
+        
+let shopList = [];
+
+
+let db = [
+    {
+        id: '0',
+        name: 'Яблуко',
+        price: 30
+    },
+    {
+        id: '1',
+        name: 'Груша',
+        price: 40
+    },
+    {
+        id: '2',
+        name: 'Персик',
+        price: 45
+    },
+    {
+        id: '3',
+        name: 'Банан',
+        price: 38
+    },
+    {
+        id: '4',
+        name: 'Апельсин',
+        price: 60
+    }
+    
+];
+
+function filterById(id) {
+    return db.filter(item => item.id === id);
+}
+
+
+for (let el of db) {
+    $('.goodsContainer').append(`<div>
+        <h3>${el.name}</h3>
+        <h4>${el.price}</h4>
+        <button id='${el.id}' class='buyBtn'>Buy</button>
+    </div > `);
+}
+
+
+$('.buyBtn').click(function (e) {
+    shopList.push(e.target.id);
+    $('#cartLength').text(shopList.length);
+})
+
+$('#send').click(function () {
+    
+    let data = shopList;
+    if (data.length > 0) {
+
+       
+            $('.menu ').css('display','flex')
+     
+        
+        
+        axios.post('http://localhost:3000/submit', data)
+            .then(res => {
+                console.log(`Дані відправлено: ${res.data}`);
+            })
+            .then(() => {
+                shopList = [];
+                $('#cartLength').text(shopList.length);
+                alert('Замовлення відправлено');
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+    } else {
+        alert('Корзина пуста');
+    }
+})
+
+$('#close').click(() => {
+    $('.menu ').css('display','none')
+   });
+
+
+    </script>
+</body>
+</html>
